@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-// import UserRoute from "./Routes/users";
+import UserRoute from "./Routes/users";
 // import ProductsRoute from "./Routes/products";
 import cors from "cors";
 import express from "express";
@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(cors());
 
 // // To use controller
-// app.use("/api/", UserRoute);
+app.use("/api/", UserRoute);
 // app.use("/api/", ProductsRoute);
 
 app.listen(PORT, () => {
