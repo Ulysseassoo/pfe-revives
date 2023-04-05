@@ -11,52 +11,64 @@ datasource db {
 }
 
 model User {
-  user_id    Int     @id
-  first_name String?
-  last_name  String?
-  email      String?
-  password   String?
-  created_at DateTime @default(now())
-  role       Int
-  stripe_id  Int
-  Shoe       Shoe[]  // user has many shoes
-  Buyer      Buyer?  // user has one buyer
-  Forum      Forum[] // user has many forum posts
+  user_id           Int               @id
+  first_name        String?
+  last_name         String?
+  email             String?
+  password          String?
+  created_at        DateTime          @default(now())
+  role              Int
+  stripe_id         Int
+  Shoe              Shoe[] // user has many shoes
+  Buyer             Buyer? // user has one buyer
+  Forum             Forum[] // user has many forum posts
+  Order             Order[]
+  shipping_address  ShippingAddress[]
+  seller            Seller[]
+  favorite          Favorite[]
+  rate              Rate[]
+  comment           Comment[]
+  sent_messages     Message[]         @relation("sent_messages")
+  received_messages Message[]         @relation("received_messages")
 }
 
 model Shoe {
-  shoe_id       Int      @id
-  brand         String?
-  model         String?
-  colorway      String?
-  size          Float?
-  status        String?
-  price         Float?
-  description   String?
-  user_id       Int?
-  created_at    DateTime @default(now())
-  is_validate   Boolean
-  Photo         Photo[]  // shoe has many photos
-  User          User?    @relation(fields: [user_id], references: [user_id])
-  CollectionPoint CollectionPoint[] // shoe can have many collection points
+  shoe_id          Int                @id
+  brand            String?
+  model            String?
+  colorway         String?
+  size             Float?
+  status           String?
+  price            Float?
+  description      String?
+  user_id          Int?
+  created_at       DateTime           @default(now())
+  is_validate      Boolean
+  Photo            Photo[] // shoe has many photos
+  User             User?              @relation(fields: [user_id], references: [user_id])
+  CollectionPoint  CollectionPoint[] // shoe can have many collection points
+  Orders_has_shoes Orders_has_shoes[]
+  Favorite         Favorite[]
+  Rate             Rate[]
+  Comment          Comment[]
 }
 
 model Photo {
-  id            Int      @id
+  id            Int     @id
   image_url     String?
   shoes_shoe_id Int
-  Shoe          Shoe     @relation(fields: [shoes_shoe_id], references: [shoe_id])
+  Shoe          Shoe    @relation(fields: [shoes_shoe_id], references: [shoe_id])
 }
 
 model Buyer {
-  buyer_id   Int     @id
+  buyer_id   Int      @id
   user_id    Int?     @unique
   created_at DateTime @default(now())
   User       User?    @relation(fields: [user_id], references: [user_id])
 }
 
 model CollectionPoint {
-  collection_point_id Int     @id
+  collection_point_id Int      @id
   name                String?
   address_line_1      String?
   address_line_2      String?
@@ -66,16 +78,117 @@ model CollectionPoint {
   country             String?
   created_at          DateTime @default(now())
   points              String?
-  Shoe                Shoe[]  // collection point can have many shoes
+  Shoe                Shoe[] // collection point can have many shoes
 }
 
 model Forum {
-  post_id    Int     @id
+  post_id    Int      @id
   user_id    Int?
   title      String?
   content    String?
   created_at DateTime @default(now())
-  User       User?   @relation(fields: [user_id], references: [user_id])
+  User       User?    @relation(fields: [user_id], references: [user_id])
 }
 
+model ShippingOption {
+  shipping_option_id      Int      @id @default(autoincrement())
+  name                    String?
+  description             String?
+  price                   Float?
+  estimated_delivery_time String?
+  created_at              DateTime @default(now())
+  orders                  Order[]
+}
 
+model Order {
+  order_id                            Int                @id @default(autoincrement())
+  user_id                             Int?
+  status                              String?
+  created_at                          DateTime           @default(now())
+  price                               Int
+  shipping_options_shipping_option_id Int
+  user                                User?              @relation(fields: [user_id], references: [user_id])
+  shipping_option                     ShippingOption     @relation(fields: [shipping_options_shipping_option_id], references: [shipping_option_id])
+  returns                             Return[]
+  Orders_has_shoes                    Orders_has_shoes[]
+}
+
+model Return {
+  return_id  Int      @id @default(autoincrement())
+  order_id   Int?
+  reason     String?
+  status     String?
+  created_at DateTime @default(now())
+  order      Order?   @relation(fields: [order_id], references: [order_id])
+}
+
+model Seller {
+  seller_id  Int      @id
+  user_id    Int?
+  created_at DateTime @default(now())
+  user       User?    @relation(fields: [user_id], references: [user_id])
+}
+
+model ShippingAddress {
+  shipping_address_id Int      @id
+  user_id             Int?
+  full_name           String?
+  address_line_1      String?
+  address_line_2      String?
+  city                String?
+  state               String?
+  zip_code            String?
+  country             String?
+  created_at          DateTime @default(now())
+  user                User?    @relation(fields: [user_id], references: [user_id])
+}
+
+model Orders_has_shoes {
+  orders_order_id Int
+  shoes_shoe_id   Int
+  quantity        Int
+  order           Order @relation(fields: [orders_order_id], references: [order_id])
+  shoe            Shoe  @relation(fields: [shoes_shoe_id], references: [shoe_id])
+
+  @@id([orders_order_id, shoes_shoe_id])
+}
+
+model Favorite {
+  users_user_id Int
+  shoes_shoe_id Int
+  created_at    DateTime @default(now())
+  user          User     @relation(fields: [users_user_id], references: [user_id])
+  shoe          Shoe     @relation(fields: [shoes_shoe_id], references: [shoe_id])
+
+  @@id([users_user_id, shoes_shoe_id])
+}
+
+model Rate {
+  users_user_id Int
+  shoes_shoe_id Int
+  rate          Int
+  user          User @relation(fields: [users_user_id], references: [user_id])
+  shoe          Shoe @relation(fields: [shoes_shoe_id], references: [shoe_id])
+
+  @@id([users_user_id, shoes_shoe_id])
+}
+
+model Comment {
+  users_user_id Int
+  shoes_shoe_id Int
+  content       String?
+  user          User    @relation(fields: [users_user_id], references: [user_id])
+  shoe          Shoe    @relation(fields: [shoes_shoe_id], references: [shoe_id])
+
+  @@id([users_user_id, shoes_shoe_id])
+}
+
+model Message {
+  id           Int      @id @default(autoincrement())
+  text         String
+  created_at   DateTime @default(now())
+  sender       User     @relation("sent_messages", fields: [sender_id], references: [user_id])
+  sender_id    Int
+  recipient    User     @relation("received_messages", fields: [recipient_id], references: [user_id])
+  recipient_id Int
+}
