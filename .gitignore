@@ -1,0 +1,6 @@
+node_modules
+.wakatime-project
+.vscode
+*.local
+.env
+*.log

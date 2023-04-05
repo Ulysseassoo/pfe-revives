@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  user_id    Int     @id
+  first_name String?
+  last_name  String?
+  email      String?
+  password   String?
+  created_at DateTime @default(now())
+  role       Int
+  stripe_id  Int
+  Shoe       Shoe[]  // user has many shoes
+  Buyer      Buyer?  // user has one buyer
+  Forum      Forum[] // user has many forum posts
+}
+
+model Shoe {
+  shoe_id       Int      @id
+  brand         String?
+  model         String?
+  colorway      String?
+  size          Float?
+  status        String?
+  price         Float?
+  description   String?
+  user_id       Int?
+  created_at    DateTime @default(now())
+  is_validate   Boolean
+  Photo         Photo[]  // shoe has many photos
+  User          User?    @relation(fields: [user_id], references: [user_id])
+  CollectionPoint CollectionPoint[] // shoe can have many collection points
+}
+
+model Photo {
+  id            Int      @id
+  image_url     String?
+  shoes_shoe_id Int
+  Shoe          Shoe     @relation(fields: [shoes_shoe_id], references: [shoe_id])
+}
+
+model Buyer {
+  buyer_id   Int     @id
+  user_id    Int?     @unique
+  created_at DateTime @default(now())
+  User       User?    @relation(fields: [user_id], references: [user_id])
+}
+
+model CollectionPoint {
+  collection_point_id Int     @id
+  name                String?
+  address_line_1      String?
+  address_line_2      String?
+  city                String?
+  state               String?
+  zip_code            String?
+  country             String?
+  created_at          DateTime @default(now())
+  points              String?
+  Shoe                Shoe[]  // collection point can have many shoes
+}
+
+model Forum {
+  post_id    Int     @id
+  user_id    Int?
+  title      String?
+  content    String?
+  created_at DateTime @default(now())
+  User       User?   @relation(fields: [user_id], references: [user_id])
+}
+
+
