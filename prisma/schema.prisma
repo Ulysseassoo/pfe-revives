@@ -11,14 +11,14 @@ datasource db {
 }
 
 model User {
-  user_id           Int               @id
-  first_name        String?
-  last_name         String?
-  email             String?
-  password          String?
+  user_id           Int               @id @default(autoincrement())
+  first_name        String?           @db.VarChar(255)
+  last_name         String?           @db.VarChar(255)
+  email             String?           @unique
+  password          String            @db.VarChar(255)
   created_at        DateTime          @default(now())
   role              Int
-  stripe_id         Int
+  stripe_id         String?
   Shoe              Shoe[] // user has many shoes
   Buyer             Buyer? // user has one buyer
   Forum             Forum[] // user has many forum posts
@@ -33,7 +33,7 @@ model User {
 }
 
 model Shoe {
-  shoe_id          Int                @id
+  shoe_id          Int                @id @default(autoincrement())
   brand            String?
   model            String?
   colorway         String?
@@ -54,21 +54,21 @@ model Shoe {
 }
 
 model Photo {
-  id            Int     @id
+  id            Int     @id @default(autoincrement())
   image_url     String?
   shoes_shoe_id Int
   Shoe          Shoe    @relation(fields: [shoes_shoe_id], references: [shoe_id])
 }
 
 model Buyer {
-  buyer_id   Int      @id
+  buyer_id   Int      @id @default(autoincrement())
   user_id    Int?     @unique
   created_at DateTime @default(now())
   User       User?    @relation(fields: [user_id], references: [user_id])
 }
 
 model CollectionPoint {
-  collection_point_id Int      @id
+  collection_point_id Int      @id @default(autoincrement())
   name                String?
   address_line_1      String?
   address_line_2      String?
@@ -82,7 +82,7 @@ model CollectionPoint {
 }
 
 model Forum {
-  post_id    Int      @id
+  post_id    Int      @id @default(autoincrement())
   user_id    Int?
   title      String?
   content    String?
@@ -123,22 +123,22 @@ model Return {
 }
 
 model Seller {
-  seller_id  Int      @id
+  seller_id  Int      @id @default(autoincrement())
   user_id    Int?
   created_at DateTime @default(now())
   user       User?    @relation(fields: [user_id], references: [user_id])
 }
 
 model ShippingAddress {
-  shipping_address_id Int      @id
+  shipping_address_id Int      @id @default(autoincrement())
   user_id             Int?
-  full_name           String?
-  address_line_1      String?
-  address_line_2      String?
-  city                String?
-  state               String?
-  zip_code            String?
-  country             String?
+  full_name           String?  @db.VarChar(255)
+  address_line_1      String?  @db.VarChar(255)
+  address_line_2      String?  @db.VarChar(255)
+  city                String?  @db.VarChar(255)
+  state               String?  @db.VarChar(255)
+  zip_code            String?  @db.VarChar(255)
+  country             String?  @db.VarChar(255)
   created_at          DateTime @default(now())
   user                User?    @relation(fields: [user_id], references: [user_id])
 }
