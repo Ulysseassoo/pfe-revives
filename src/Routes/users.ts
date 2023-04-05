@@ -1,12 +1,13 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import express from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import process from "process";
 import { validationResult } from "express-validator";
-import { userValidator } from "../Validator/userValidator";
+import { userUpdate, userValidator } from "../Validator/userValidator";
 import { db } from "../Utils/db.server";
 import { generateToken } from "../Utils/jwt";
+import authMiddleware from "../Middleware/auth.middleware";
 
 const router = express.Router();
 // -------------------------------------------------------------------------- ROUTES -------------------------------------------------------------
@@ -52,6 +53,85 @@ router.post(
 			return res.json({ status: 201, data: user });
 		} catch (error) {
 			console.log(error);
+			return res.status(401).send({
+				status: 401,
+				message: error,
+			});
+		}
+	},
+);
+router.put(
+	"/users",
+	authMiddleware,
+	userUpdate,
+	async (req: express.Request, res: express.Response) => {
+		try {
+			const errors = validationResult(req);
+
+			if (!errors.isEmpty()) {
+				return res.status(401).send({
+					status: 401,
+					message: errors,
+				});
+			}
+
+			const { email, firstname, lastname } = req.body;
+			const user = req.user as User;
+			const updatedUser = await db.user.update({
+				where: {
+					user_id: user.user_id,
+				},
+				data: {
+					email,
+					first_name: firstname,
+					last_name: lastname,
+				},
+				select: {
+					first_name: true,
+					last_name: true,
+					email: true,
+					role: true,
+					stripe_id: true,
+					user_id: true,
+					created_at: true,
+				},
+			});
+
+			return res.json({ status: 200, data: updatedUser });
+		} catch (error) {
+			console.log(error);
+			return res.status(401).send({
+				status: 401,
+				message: error,
+			});
+		}
+	},
+);
+
+router.get(
+	"/users/me",
+	authMiddleware,
+	async (req: express.Request, res: express.Response) => {
+		try {
+			const user = (await db.user.findUnique({
+				where: {
+					user_id: req.user?.user_id,
+				},
+				include: {
+					Order: true,
+					favorite: true,
+					shipping_address: true,
+				},
+			})) as User;
+
+			const jsonString = JSON.stringify(user, (key, value) => {
+				return key === "password" ? undefined : value;
+			});
+
+			const userWithoutPassword = JSON.parse(jsonString);
+
+			return res.json({ status: 200, data: userWithoutPassword });
+		} catch (error) {
 			return res.status(401).send({
 				status: 401,
 				message: error,
