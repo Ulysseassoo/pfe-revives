@@ -34,13 +34,13 @@ model User {
 
 model Shoe {
   shoe_id          Int                @id @default(autoincrement())
-  brand            String?
-  model            String?
-  colorway         String?
-  size             Float?
-  status           String?
-  price            Float?
-  description      String?
+  brand            String             @db.VarChar(255)
+  model            String             @db.VarChar(255)
+  color            String             @db.VarChar(255)
+  size             Float
+  status           String             @db.VarChar(255)
+  price            Float
+  description      String             @db.VarChar(255)
   user_id          Int?
   created_at       DateTime           @default(now())
   is_validate      Boolean
