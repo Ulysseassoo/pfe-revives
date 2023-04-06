@@ -1,16 +1,10 @@
-import { PrismaClient, Shoe } from "@prisma/client";
+import { Shoe } from "@prisma/client";
 import express from "express";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
-import process from "process";
 import { validationResult } from "express-validator";
-import { userUpdate, userValidator } from "../Validator/userValidator";
 import { db } from "../Utils/db.server";
-import { generateToken } from "../Utils/jwt";
 import authMiddleware from "../Middleware/auth.middleware";
 import adminMiddleware from "../Middleware/admin.middleware";
-import { shoeCreate } from "../Validator/shoeValidator";
-
+import { shoeCreate, shoeUpdate } from "../Validator/shoeValidator";
 
 const router = express.Router();
 // -------------------------------------------------------------------------- ROUTES -------------------------------------------------------------
@@ -137,6 +131,121 @@ router.post(
 	},
 );
 
+router.put(
+	"/shoes/:id",
+    authMiddleware,
+    adminMiddleware,
+	shoeUpdate,
+	async (
+		req: express.Request,
+		res: express.Response,
+	) => {
+		try {
+            const errors = validationResult(req);
+
+			if (!errors.isEmpty()) {
+				return res.status(401).send({
+					status: 401,
+					message: errors,
+				})
+			}
+
+			const product = await db.shoe.findUnique({
+				where: {
+					shoe_id: parseInt(req.params.id)
+				}
+			}) as Shoe
+
+			if (!product) {
+				return res.status(401).send({
+					status: 404,
+					errors: ['This product does not exist'],
+				})
+			}
+
+			const { model, brand, color, size, status, description, price, is_validate } = req.body
+
+			const productUpdated = await db.shoe.update({
+				where: {
+					shoe_id: parseInt(req.params.id),
+				},
+				data: {
+					model, 
+					brand, 
+					color, 
+					size, 
+					status, 
+					description, 
+					price, 
+					is_validate
+				},
+				select: {
+					model: true,
+					brand: true,
+					color: true,
+					size: true,
+					status: true,
+					description: true,
+					price: true,
+					is_validate: true
+				},
+			})
+
+			res.status(201).json({
+				status: 201,
+				data: productUpdated,
+			})
+
+		} catch (error) {
+			return res.status(400).json({
+				status: 400,
+				errors: ["Error when updating products"],
+			});
+		}
+	},
+);
+
+router.delete(
+	"/shoes/:id",
+    authMiddleware,
+    adminMiddleware,
+	async (
+		req: express.Request,
+		res: express.Response,
+	) => {
+		try {
+			const product = await db.shoe.findUnique({
+				where: {
+					shoe_id: parseInt(req.params.id)
+				}
+			}) as Shoe
+
+			if (!product) {
+				return res.status(401).send({
+					status: 404,
+					errors: ['This product does not exist'],
+				})
+			}
+
+			const productDeleted = await db.shoe.delete({
+				where: {
+					shoe_id: parseInt(req.params.id)
+				}
+			})
+
+			res.status(201).json({
+				status: 201,
+				data: productDeleted,
+			})
+
+		} catch (error) {
+			return res.status(400).json({
+				status: 400,
+				errors: ["Error when deleting products"],
+			});
+		}
+	},
+);
 
 
 export default router;
