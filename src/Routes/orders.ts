@@ -1,4 +1,4 @@
-import { Shoe } from "@prisma/client";
+import { Shoe, User } from "@prisma/client";
 import express from "express";
 import { validationResult } from "express-validator";
 import { db } from "../Utils/db.server";
@@ -39,6 +39,9 @@ const getTotalPrice = async (products: ShoeWithQuantity[]) => {
 	return totalPrice;
 };
 
+const getOrderHasShoes = async (products: ShoeWithQuantity[]) =>
+	products.map((product) => ({ quantity: product.quantity, shoes_shoe_id: product.shoe_id }));
+
 // -------------------------------------------------------------------------- ROUTES -------------------------------------------------------------
 
 router.post("/orders", authMiddleware, orderCreate, async (req: express.Request, res: express.Response) => {
@@ -60,32 +63,61 @@ router.post("/orders", authMiddleware, orderCreate, async (req: express.Request,
 			},
 		});
 
-		if (!shipping_options) {
+		if (shipping_options !== null) {
+			const totalPrice = await getTotalPrice(products);
+			const orderHasShoes = await getOrderHasShoes(products);
+
+			const order = await db.order.create({
+				data: {
+					user_id: req.user?.user_id,
+					status: "Pending",
+					price: totalPrice + shipping_options.price,
+					shipping_options_shipping_option_id,
+					Orders_has_shoes: {
+						create: orderHasShoes,
+					},
+				},
+				include: {
+					Orders_has_shoes: true,
+				},
+			});
+
+			res.status(201).json({
+				status: 201,
+				data: order,
+			});
+		} else {
 			return res.status(401).send({
 				status: 401,
 				message: "Shipping option not found",
 			});
 		}
-
-		const totalPrice = await getTotalPrice(products);
-
-		const order = await db.order.create({
-			data: {
-				user_id: req.user?.user_id,
-				status: "Pending",
-				price: totalPrice,
-				shipping_options_shipping_option_id,
-			},
-		});
-
-		res.status(201).json({
-			status: 201,
-			data: order,
-		});
 	} catch (error) {
 		return res.status(400).json({
 			status: 400,
 			errors: ["Error when creating order"],
+		});
+	}
+});
+
+router.get("/orders", authMiddleware, async (req: express.Request, res: express.Response) => {
+	try {
+		const user = req.user as User;
+
+		const userOrders = await db.order.findMany({
+			where: {
+				user_id: user.user_id,
+			},
+			include: {
+				Orders_has_shoes: true,
+			},
+		});
+
+		return res.json({ status: 200, data: userOrders });
+	} catch (error) {
+		return res.status(401).send({
+			status: 401,
+			message: error,
 		});
 	}
 });

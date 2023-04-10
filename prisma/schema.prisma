@@ -92,10 +92,10 @@ model Forum {
 
 model ShippingOption {
   shipping_option_id      Int      @id @default(autoincrement())
-  name                    String?
-  description             String?
-  price                   Float?
-  estimated_delivery_time String?
+  name                    String
+  description             String
+  price                   Float
+  estimated_delivery_time String
   created_at              DateTime @default(now())
   orders                  Order[]
 }
