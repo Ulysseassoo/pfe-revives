@@ -131,16 +131,16 @@ model Seller {
 
 model ShippingAddress {
   shipping_address_id Int      @id @default(autoincrement())
-  user_id             Int?
-  full_name           String?  @db.VarChar(255)
-  address_line_1      String?  @db.VarChar(255)
+  user_id             Int
+  full_name           String  @db.VarChar(255)
+  address_line_1      String  @db.VarChar(255)
   address_line_2      String?  @db.VarChar(255)
-  city                String?  @db.VarChar(255)
-  state               String?  @db.VarChar(255)
-  zip_code            String?  @db.VarChar(255)
-  country             String?  @db.VarChar(255)
+  city                String  @db.VarChar(255)
+  state               String  @db.VarChar(255)
+  zip_code            String  @db.VarChar(255)
+  country             String  @db.VarChar(255)
   created_at          DateTime @default(now())
-  user                User?    @relation(fields: [user_id], references: [user_id])
+  user                User    @relation(fields: [user_id], references: [user_id])
 }
 
 model Orders_has_shoes {

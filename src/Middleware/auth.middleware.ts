@@ -5,6 +5,7 @@ import { User } from "@prisma/client";
 
 interface UserPayload {
 	userId: number;
+	exp: number;
 }
 
 declare global {
@@ -15,30 +16,38 @@ declare global {
 	}
 }
 
-const authMiddleware = async (
-	req: Request,
-	res: Response,
-	next: NextFunction,
-) => {
+const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
 	const token = req.headers.authorization?.replace("Bearer ", "");
 
 	if (!token) {
-		return res
-			.status(401)
-			.send({ status: 401, error: "Authentication required" });
+		return res.status(401).send({ status: 401, error: "Authentication required" });
 	}
 
 	try {
 		const JWT_SECRET = process.env.JWT_SECRET as string;
 		const payload = jwt.verify(token, JWT_SECRET) as UserPayload;
+
+		// check if token has expired
+		if (Date.now() >= payload.exp * 1000) {
+			return res.status(401).send({ status: 401, error: "Token has expired" });
+		}
+
 		const user = await db.user.findUnique({
 			where: { user_id: payload.userId },
 		});
+		console.log("🚀 ~ file: auth.middleware.ts:40 ~ authMiddleware ~ user:", user);
 		req.user = user;
 		next();
 	} catch (error) {
-		console.log(error);
-		return res.status(401).send({ status: 401, error: "Invalid token" });
+		if (error instanceof jwt.TokenExpiredError) {
+			// token has expired, send an error response
+			return res.status(401).send({
+				status: 401,
+				message: "Token has expired",
+			});
+		} else {
+			res.status(401).send({ status: 401, error: "Invalid token" });
+		}
 	}
 };
 
