@@ -115,11 +115,11 @@ model Order {
 
 model Return {
   return_id  Int      @id @default(autoincrement())
-  order_id   Int?
-  reason     String?
-  status     String?
+  order_id   Int
+  reason     String
+  status     String
   created_at DateTime @default(now())
-  order      Order?   @relation(fields: [order_id], references: [order_id])
+  order      Order   @relation(fields: [order_id], references: [order_id])
 }
 
 model Seller {
