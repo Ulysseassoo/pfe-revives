@@ -7,6 +7,8 @@ import ShippingOptionsRoute from "./Routes/shipping_options";
 import OrdersRoute from "./Routes/orders";
 import ShippingAddressRoute from "./Routes/shipping_addresses";
 import Returns from "./Routes/returns";
+import Rates from "./Routes/rates";
+
 
 dotenv.config();
 
@@ -22,7 +24,7 @@ app.use(express.json());
 app.use(cors());
 
 // // To use controller
-app.use("/api/", UserRoute, ShoesRoute, ShippingOptionsRoute, OrdersRoute, ShippingAddressRoute, Returns);
+app.use("/api/", UserRoute, ShoesRoute, ShippingOptionsRoute, OrdersRoute, ShippingAddressRoute, Returns, Rates);
 
 app.listen(PORT, () => {
 	console.log(`listening on port ${PORT}`);
