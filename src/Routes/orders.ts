@@ -71,7 +71,7 @@ router.post("/orders", authMiddleware, orderCreate, async (req: express.Request,
 				data: {
 					user_id: req.user?.user_id,
 					status: "Pending",
-					price: totalPrice + shipping_options.price,
+					price: totalPrice + shipping_options.price!!,
 					shipping_options_shipping_option_id,
 					Orders_has_shoes: {
 						create: orderHasShoes,
