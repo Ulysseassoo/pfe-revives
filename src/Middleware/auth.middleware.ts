@@ -35,7 +35,6 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
 		const user = await db.user.findUnique({
 			where: { user_id: payload.userId },
 		});
-		console.log("🚀 ~ file: auth.middleware.ts:40 ~ authMiddleware ~ user:", user);
 		req.user = user;
 		next();
 	} catch (error) {

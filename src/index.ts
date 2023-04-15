@@ -10,6 +10,7 @@ import Returns from "./Routes/returns";
 import Comments from "./Routes/comments";
 import Rates from "./Routes/rates";
 import Photos from "./Routes/photos";
+import Carts from "./Routes/carts";
 import { Server } from "socket.io"; // Import Socket.IO
 import http from "http"; // Import HTTP module
 import { UserSocket } from "./Inteface/User";
@@ -45,6 +46,7 @@ app.use(
 	Rates,
 	Photos,
 	Comments,
+	Carts,
 );
 
 // Socket
