@@ -131,32 +131,73 @@ router.get("/users/me", authMiddleware, async (req: express.Request, res: expres
 	}
 });
 
-router.get('/users/me/rates', authMiddleware, async (
-	req: express.Request, 
-	res: express.Response
-) => {
-	const user = req.user as User
+router.get("/users/me/rates", authMiddleware, async (req: express.Request, res: express.Response) => {
+	const user = req.user as User;
 
 	try {
 		const rates = await db.rate.findMany({
 			where: {
-				users_user_id: user.user_id		
-			}
-		})
-		
+				users_user_id: user.user_id,
+			},
+		});
+
 		return res.status(200).send({
 			status: 200,
-			data: rates
-		})
-	} catch(error: any) {
-		console.log(error)
-		
+			data: rates,
+		});
+	} catch (error: any) {
+		console.log(error);
+
 		return res.status(400).send({
 			status: 400,
-			errors: ["Error getting user's rates"]
-		})
+			errors: ["Error getting user's rates"],
+		});
 	}
-})
+});
+
+router.get("/users/me/comments", authMiddleware, async (req: express.Request, res: express.Response) => {
+	try {
+		const user = req.user as User;
+
+		const comments = await db.comment.findMany({
+			where: {
+				users_user_id: user.user_id,
+			},
+		});
+
+		res.status(201).json({
+			status: 201,
+			data: comments,
+		});
+	} catch (error) {
+		return res.status(400).json({
+			status: 400,
+			errors: ["Error when getting user's comments"],
+		});
+	}
+});
+
+router.get("/users/me/comments", authMiddleware, async (req: express.Request, res: express.Response) => {
+	try {
+		const user = req.user as User;
+
+		const comments = await db.comment.findMany({
+			where: {
+				users_user_id: user.user_id,
+			},
+		});
+
+		res.status(201).json({
+			status: 201,
+			data: comments,
+		});
+	} catch (error) {
+		return res.status(400).json({
+			status: 400,
+			errors: ["Error when getting user's comments"],
+		});
+	}
+});
 
 router.post("/auth", async (req, res) => {
 	const { email, password } = req.body;

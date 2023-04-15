@@ -7,6 +7,7 @@ import ShippingOptionsRoute from "./Routes/shipping_options";
 import OrdersRoute from "./Routes/orders";
 import ShippingAddressRoute from "./Routes/shipping_addresses";
 import Returns from "./Routes/returns";
+import Comments from "./Routes/comments"
 import Rates from "./Routes/rates";
 import Photos from "./Routes/photos";
 import { Server } from "socket.io"; // Import Socket.IO
@@ -38,6 +39,7 @@ app.use(
 	Returns,
 	Rates,
 	Photos,
+	Comments
 );
 
 // Socket
