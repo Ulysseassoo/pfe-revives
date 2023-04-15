@@ -131,6 +131,36 @@ router.get("/users/me", authMiddleware, async (req: express.Request, res: expres
 	}
 });
 
+router.get(
+	"/users/me/comments",
+    authMiddleware,
+	async (
+		req: express.Request,
+		res: express.Response,
+	) => {
+		try {
+
+			const user = req.user as User
+
+            const comments = await db.comment.findMany({
+                where: {
+                    users_user_id: user.user_id
+                }
+            })
+			
+			res.status(201).json({
+				status: 201,
+				data: comments,
+			});
+		} catch (error) {
+			return res.status(400).json({
+				status: 400,
+				errors: ["Error when getting user's comments"],
+			});
+		}
+	},
+);
+
 router.post("/auth", async (req, res) => {
 	const { email, password } = req.body;
 	const user = await db.user.findUnique({ where: { email } });
