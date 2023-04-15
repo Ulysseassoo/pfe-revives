@@ -30,6 +30,7 @@ model User {
   comment           Comment[]
   sent_messages     Message[]         @relation("sent_messages")
   received_messages Message[]         @relation("received_messages")
+  Cart              Cart?
 }
 
 model Shoe {
@@ -51,6 +52,7 @@ model Shoe {
   Favorite         Favorite[]
   Rate             Rate[]
   Comment          Comment[]
+  Cart             Cart[]
 }
 
 model Photo {
@@ -119,7 +121,7 @@ model Return {
   reason     String
   status     String
   created_at DateTime @default(now())
-  order      Order   @relation(fields: [order_id], references: [order_id])
+  order      Order    @relation(fields: [order_id], references: [order_id])
 }
 
 model Seller {
@@ -132,15 +134,15 @@ model Seller {
 model ShippingAddress {
   shipping_address_id Int      @id @default(autoincrement())
   user_id             Int
-  full_name           String  @db.VarChar(255)
-  address_line_1      String  @db.VarChar(255)
+  full_name           String   @db.VarChar(255)
+  address_line_1      String   @db.VarChar(255)
   address_line_2      String?  @db.VarChar(255)
-  city                String  @db.VarChar(255)
-  state               String  @db.VarChar(255)
-  zip_code            String  @db.VarChar(255)
-  country             String  @db.VarChar(255)
+  city                String   @db.VarChar(255)
+  state               String   @db.VarChar(255)
+  zip_code            String   @db.VarChar(255)
+  country             String   @db.VarChar(255)
   created_at          DateTime @default(now())
-  user                User    @relation(fields: [user_id], references: [user_id])
+  user                User     @relation(fields: [user_id], references: [user_id])
 }
 
 model Orders_has_shoes {
@@ -191,4 +193,16 @@ model Message {
   sender_id    Int
   recipient    User     @relation("received_messages", fields: [recipient_id], references: [user_id])
   recipient_id Int
+}
+
+model Cart {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [user_id])
+  userId    Int      @unique
+  product   Shoe     @relation(fields: [productId], references: [shoe_id])
+  productId Int
+  quantity  Int
+  price     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
