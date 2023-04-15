@@ -7,7 +7,7 @@ import ShippingOptionsRoute from "./Routes/shipping_options";
 import OrdersRoute from "./Routes/orders";
 import ShippingAddressRoute from "./Routes/shipping_addresses";
 import Returns from "./Routes/returns";
-import Comments from "./Routes/comments"
+import Comments from "./Routes/comments";
 import Rates from "./Routes/rates";
 import Photos from "./Routes/photos";
 import { Server } from "socket.io"; // Import Socket.IO
@@ -23,7 +23,11 @@ const PORT: number = parseInt(process.env.PORT as string, 10);
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+	cors: {
+		origin: process.env.ORIGIN,
+	},
+});
 
 app.use(express.json());
 app.use(cors());
@@ -39,7 +43,7 @@ app.use(
 	Returns,
 	Rates,
 	Photos,
-	Comments
+	Comments,
 );
 
 // Socket
