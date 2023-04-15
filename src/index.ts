@@ -12,6 +12,7 @@ import Rates from "./Routes/rates";
 import Photos from "./Routes/photos";
 import { Server } from "socket.io"; // Import Socket.IO
 import http from "http"; // Import HTTP module
+import { UserSocket } from "./Inteface/User";
 
 dotenv.config();
 
@@ -47,8 +48,13 @@ app.use(
 );
 
 // Socket
+const sockets: UserSocket[] = [];
 io.on("connection", (socket) => {
-	console.log("a user connected");
+	console.log("a user connected", socket.id);
+	sockets.push({
+		user_id: null,
+		socket_id: socket.id,
+	});
 
 	// Emit an event to the connected client
 	socket.emit("welcome", "Welcome to Socket.IO!");
