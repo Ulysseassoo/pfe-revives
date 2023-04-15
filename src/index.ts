@@ -8,6 +8,7 @@ import OrdersRoute from "./Routes/orders";
 import ShippingAddressRoute from "./Routes/shipping_addresses";
 import Returns from "./Routes/returns";
 import Rates from "./Routes/rates";
+import Photos from './Routes/photos'
 import { Server } from "socket.io"; // Import Socket.IO
 import http from "http"; // Import HTTP module
 
@@ -27,7 +28,7 @@ app.use(express.json());
 app.use(cors());
 
 // // To use controller
-app.use("/api/", UserRoute, ShoesRoute, ShippingOptionsRoute, OrdersRoute, ShippingAddressRoute, Returns, Rates);
+app.use("/api/", UserRoute, ShoesRoute, ShippingOptionsRoute, OrdersRoute, ShippingAddressRoute, Returns, Rates, Photos);
 
 // Socket
 io.on("connection", (socket) => {
