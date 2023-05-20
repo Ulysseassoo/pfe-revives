@@ -45,6 +45,13 @@ router.post("/users", userValidator, async (req: express.Request, res: express.R
 				password: passwordEncrypted,
 				role: 1,
 			},
+			select: {
+				user_id: true,
+				email: true,
+				first_name: true,
+				last_name: true,
+				role: true,
+			},
 		});
 
 		return res.json({ status: 201, data: user });
