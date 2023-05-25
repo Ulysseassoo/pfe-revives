@@ -41,6 +41,8 @@ model Shoe {
   size             Float
   status           String             @db.VarChar(255)
   price            Float
+  real_price       Float
+  rate             Int
   description      String             @db.VarChar(255)
   user_id          Int?
   created_at       DateTime           @default(now())
