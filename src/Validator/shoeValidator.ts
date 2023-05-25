@@ -9,6 +9,8 @@ export const shoeCreate = [
 	body("is_validate").isBoolean(),
 	body("size").isNumeric(),
 	body("price").isNumeric(),
+	body("rate").isNumeric(),
+	body("real_price").isNumeric(),
 ];
 
 export const shoeUpdate = [
@@ -20,4 +22,4 @@ export const shoeUpdate = [
 	body("is_validate").isBoolean(),
 	body("size").isNumeric(),
 	body("price").isNumeric(),
-]
+];

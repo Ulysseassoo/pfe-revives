@@ -7,6 +7,9 @@
 		"start": "tsc -w & node dist/index.js",
 		"dev": "nodemon src/index.ts"
 	},
+	"prisma": {
+		"seed": "ts-node prisma/seed.ts"
+	},
 	"repository": "https://github.com/Ulysseassoo/pfe-revives-back.git",
 	"author": "Ulysse <ulysse.asso-o-emane@supinternet.fr>",
 	"license": "MIT",
