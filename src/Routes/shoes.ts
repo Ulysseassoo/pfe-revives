@@ -18,6 +18,8 @@ interface ProductsQueryParams {
 	size?: number;
 	brand?: string;
 	color?: string;
+	take?: string;
+	rate?: string;
 }
 
 interface PriceRangeFilter {
@@ -48,10 +50,11 @@ const sanitizePriceRangeFilter = (filter: ProductsQueryParams): PriceRangeFilter
 
 router.get("/shoes", async (req: express.Request<any, any, any, ProductsQueryParams>, res: express.Response) => {
 	try {
-		const { model, gt, gte, lt, lte, size, brand, color } = req.query;
+		const { model, gt, gte, lt, lte, size, brand, color, take, rate } = req.query;
 
 		const sanitizedFilter = sanitizePriceRangeFilter({ gt, gte, lt, lte });
 		const products = await db.shoe.findMany({
+			take: take !== undefined ? parseInt(take) : undefined,
 			where: {
 				model: {
 					contains: model,
@@ -60,6 +63,10 @@ router.get("/shoes", async (req: express.Request<any, any, any, ProductsQueryPar
 				size,
 				brand,
 				color,
+				rate: rate !== undefined ? parseInt(rate) : undefined,
+			},
+			include: {
+				Photo: true,
 			},
 		});
 		res.status(200).json({

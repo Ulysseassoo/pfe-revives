@@ -42,7 +42,7 @@ router.post("/carts", authMiddleware, async (req: express.Request, res: express.
 		const cart = await db.cart.create({
 			data: {
 				userId: user.user_id,
-				products: "",
+				products: [],
 			},
 		});
 
@@ -94,7 +94,7 @@ router.put("/carts/:id", authMiddleware, cartUpdate, async (req: express.Request
 		});
 
 		if (cart) {
-			const products: ShoeWithQuantity[] = JSON.parse(req.body.products);
+			const products: ShoeWithQuantity[] = req.body.products;
 			const formattedProducts = await formatProducts(products);
 			const updatedCart = await db.cart.update({
 				where: {

@@ -200,7 +200,7 @@ model Cart {
   id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [user_id])
   userId    Int      @unique
-  products  String   @db.LongText
+  products  Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
