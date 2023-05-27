@@ -23,6 +23,9 @@ const formatProducts = async (products: ShoeWithQuantity[]) => {
 				in: productIds,
 			},
 		},
+		include: {
+			Photo: true,
+		},
 	});
 
 	const mergedProducts: ShoeWithQuantity[] = fetchedProducts.map((product: Shoe) => {
@@ -55,7 +58,7 @@ router.post("/carts", authMiddleware, async (req: express.Request, res: express.
 	}
 });
 
-router.get("/carts", authMiddleware, adminMiddleware, async (req: express.Request, res: express.Response) => {
+router.get("/carts", authMiddleware, async (req: express.Request, res: express.Response) => {
 	try {
 		const user = req.user as User;
 
