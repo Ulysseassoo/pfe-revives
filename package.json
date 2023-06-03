@@ -4,8 +4,9 @@
 	"main": "index.js",
 	"scripts": {
 		"update-db": "yarn prisma db pull && yarn prisma generate",
-		"start": "tsc -w & node dist/index.js",
-		"dev": "nodemon src/index.ts"
+		"start": "ts-node src/index.ts",
+		"dev": "nodemon src/index.ts",
+		"build": "tsc"
 	},
 	"prisma": {
 		"seed": "ts-node prisma/seed.ts"
