@@ -17,7 +17,11 @@ router.get("/favorites", authMiddleware, async (req: express.Request, res: expre
 				users_user_id: user.user_id
 			},
 			include: {
-				shoe: true
+				shoe: {
+					include: {
+						Photo: true
+					}
+				}
 			}
 		})) as Favorite[]
 
@@ -80,7 +84,11 @@ router.post("/favorites", authMiddleware, favoriteCreate, async (req: express.Re
 				users_user_id: user.user_id
 			},
 			include: {
-				shoe: true
+				shoe: {
+					include: {
+						Photo: true
+					}
+				}
 			}
 		})
 
