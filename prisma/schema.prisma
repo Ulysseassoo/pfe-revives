@@ -38,7 +38,7 @@ model Shoe {
   brand            String             @db.VarChar(255)
   model            String             @db.VarChar(255)
   color            String             @db.VarChar(255)
-  size             Float
+  size             Size[]
   status           String             @db.VarChar(255)
   price            Float
   real_price       Float
@@ -54,6 +54,13 @@ model Shoe {
   Favorite         Favorite[]
   Rate             Rate[]
   Comment          Comment[]
+}
+
+model Size {
+  id       Int      @id @default(autoincrement())
+  size     Float
+  shoeId   Int
+  shoe     Shoe     @relation(fields: [shoeId], references: [shoe_id])
 }
 
 model Photo {
