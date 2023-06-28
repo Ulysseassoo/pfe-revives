@@ -61,6 +61,7 @@ router.post("/orders", authMiddleware, orderCreate, async (req: express.Request,
 		}
 
 		const { products, shipping_options_shipping_option_id } = req.body
+		const user = req.user as User
 
 		const shipping_options = await db.shippingOption.findUnique({
 			where: {
@@ -110,16 +111,9 @@ router.post("/orders", authMiddleware, orderCreate, async (req: express.Request,
 				mode: "payment",
 				success_url: `${process.env.CLIENT_URL}/success`,
 				cancel_url: `${process.env.CLIENT_URL}/failed`,
-				line_items: lineItems
-			})
-
-			await db.user.update({
-				where: {
-					user_id: req.user?.user_id
-				},
-				data: {
-					stripe_id: session.id
-				}
+				line_items: lineItems,
+				customer: user.stripe_id ?? undefined,
+				client_reference_id: user.stripe_id ?? undefined
 			})
 
 			const order = await db.order.create({

@@ -133,6 +133,7 @@ router.put("/users", authMiddleware, userUpdate, async (req: express.Request, re
 						zip_code: postalCode,
 						country,
 						city,
+						state: country,
 						address_line_1: address
 					}
 				}
@@ -149,6 +150,18 @@ router.put("/users", authMiddleware, userUpdate, async (req: express.Request, re
 				shipping_address: true
 			}
 		})
+
+		if (user.stripe_id) {
+			stripe.customers.update(user.stripe_id, {
+				address: {
+					city,
+					country: "FR",
+					line1: address,
+					postal_code: postalCode,
+					state: country
+				}
+			})
+		}
 
 		return res.json({ status: 200, data: updatedUser })
 	} catch (error) {

@@ -78,7 +78,6 @@ router.get("/shoes", async (req: express.Request<any, any, any, ProductsQueryPar
 			data: products
 		})
 	} catch (error) {
-		console.log("🚀 ~ file: shoes.ts:83 ~ error:", error)
 		return res.status(400).json({
 			status: 400,
 			errors: ["Error when getting products"]
