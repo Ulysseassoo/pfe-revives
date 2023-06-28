@@ -34,7 +34,7 @@ async function main() {
 
 	for (const item of data) {
 		const photos: { image_url?: string }[] = []
-		if (item.models[0].images.length > 0 && item.price !== "" && item.label !== "") {
+		if (item.models[0].images.length > 0 && item.price !== "" && item.models[0].label !== "") {
 			for (let i = 0; i < item.models[0].images.length; i++) {
 				const element = item.models[0].images[i]
 				photos.push({
