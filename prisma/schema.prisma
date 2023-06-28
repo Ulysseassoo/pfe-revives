@@ -19,11 +19,12 @@ model User {
   created_at        DateTime          @default(now())
   role              Int
   stripe_id         String?
+  phone             String?           @db.VarChar(255)
   Shoe              Shoe[] // user has many shoes
   Buyer             Buyer? // user has one buyer
   Forum             Forum[] // user has many forum posts
   Order             Order[]
-  shipping_address  ShippingAddress[]
+  shipping_address  ShippingAddress?
   seller            Seller[]
   favorite          Favorite[]
   rate              Rate[]
@@ -141,7 +142,7 @@ model Seller {
 
 model ShippingAddress {
   shipping_address_id Int      @id @default(autoincrement())
-  user_id             Int
+  user_id             Int       @unique
   full_name           String   @db.VarChar(255)
   address_line_1      String   @db.VarChar(255)
   address_line_2      String?  @db.VarChar(255)
