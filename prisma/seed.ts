@@ -53,7 +53,7 @@ async function main() {
 					color: item.models[0].colors[0] ?? "Black",
 					status: "Available",
 					brand: "Jordan",
-					rate: getRandomNumber(),
+					rate: 5,
 					is_validate: true,
 					Photo: {
 						create: [...photos]

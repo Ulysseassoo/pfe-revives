@@ -107,7 +107,7 @@ router.post("/orders", authMiddleware, orderCreate, async (req: express.Request,
 
 			const session = await stripe.checkout.sessions.create({
 				shipping_address_collection: { allowed_countries: ["FR"] },
-				payment_method_types: ["card"],
+				payment_method_types: ["card", "paypal"],
 				mode: "payment",
 				success_url: `${process.env.CLIENT_URL}/success`,
 				cancel_url: `${process.env.CLIENT_URL}/failed`,
