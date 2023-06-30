@@ -48,7 +48,7 @@ async function main() {
 					description:
 						"La chaussure de basket est un équipement essentiel pour les joueurs de ce sport dynamique et exigeant. Conçue spécifiquement pour répondre aux besoins des athlètes sur le terrain, elle allie style, performance et protection. ",
 					model: item.name,
-					price: 190,
+					price: 80,
 					real_price: parseInt(item.price.split("$")[1]) ?? 400,
 					color: item.models[0].colors[0] ?? "Black",
 					status: "Available",
